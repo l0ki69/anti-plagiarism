@@ -1,3 +1,5 @@
 spacy==3.3.0
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.12.2
+spark-nlp==3.4.4
+pyspark==3.2.1
