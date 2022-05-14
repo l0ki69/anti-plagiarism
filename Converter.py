@@ -1,6 +1,9 @@
 from typing import List
 
 import spacy
+import ru_core_news_md
+# spacy.cli.download("ru_core_news_md")
+
 from spacy.lang.ru.examples import sentences
 
 

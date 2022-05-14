@@ -1,4 +1,6 @@
 from typing import List, Dict
+import os
+from dotenv import load_dotenv
 
 from fuzzywuzzy import fuzz, process
 
@@ -12,6 +14,10 @@ def open_file(file_name):
 
 
 if __name__ == '__main__':
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(dotenv_path):
+        load_dotenv(dotenv_path)
+
     text_1 = open_file("text_1.txt")
     text_2 = open_file("text_2.txt")
 

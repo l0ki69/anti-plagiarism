@@ -3,3 +3,6 @@ fuzzywuzzy==0.18.0
 python-Levenshtein==0.12.2
 spark-nlp==3.4.4
 pyspark==3.2.1
+virtualenv==20.14.1
+python-dotenv==0.20.0
+ru-core-news-md==3.3.0
