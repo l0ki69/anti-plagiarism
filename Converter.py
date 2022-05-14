@@ -8,6 +8,9 @@ from spacy.lang.ru.examples import sentences
 
 
 class Сonverter:
+    """
+    Class for converting raw text to simplified
+    """
     exception_characters = [',', ':', ';', '\'', '\"', '?', '!', '/', '\\', '|', '@', '#', '$', '%', '^', '&', '*',
                             '(', ')', '_', '+', '=', '[', ']', '{', '}', '`', '~', '№', '<', '>', '–', '-']
 
