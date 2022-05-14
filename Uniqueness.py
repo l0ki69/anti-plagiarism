@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 
 class Uniqueness:
@@ -6,7 +6,7 @@ class Uniqueness:
     Class for calculating the percentage of uniqueness
     """
     @classmethod
-    def uniqueness_wroker(cls, shingles: Tuple[List[str]] = None) -> float:
+    def uniqueness_wroker(cls, shingles: List[List[str]] = None) -> float:
         if shingles is None:
             return 0.0
 

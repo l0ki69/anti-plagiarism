@@ -4,6 +4,17 @@ import hashlib
 from itertools import permutations
 
 
+class ShingleException(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+class TextIsShort(ShingleException):
+    def __init__(self):
+        message = "Text is too short"
+        super().__init__(message)
+
+
 class Shingle:
     """
     Class for converting simplified text to shingles
@@ -41,6 +52,10 @@ class Shingle:
         sentence_words = self.get_list_words(text)
 
         shingles_text = [self.get_shingles_with_sentence(text=sentence) for sentence in sentence_words]
+
+        if shingles_text:
+            if not shingles_text[0]:
+                raise TextIsShort
         return self.get_list_shingles(shingles_text)
 
     def get_permutations(self) -> List[Tuple[str]]:
