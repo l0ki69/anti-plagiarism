@@ -12,12 +12,12 @@ class Plahiarismhandler:
 
     @classmethod
     def handler(cls, text_1: str, text_2: str) -> float:
-        simple_page_1 = Сonverter.convert_text(text_1)
-        simple_page_2 = Сonverter.convert_text(text_2)
+        simple_text_1 = Сonverter.convert_text(text_1)
+        simple_text_2 = Сonverter.convert_text(text_2)
 
         shingle_worker = Shingle(int(os.getenv('SHINGLE_SIZE')))
-        shingle_1 = shingle_worker.get_shingles_with_page(simple_page_1)
-        shingle_2 = shingle_worker.get_shingles_with_page(simple_page_2)
+        shingle_1 = shingle_worker.get_shingles_with_text(simple_text_1)
+        shingle_2 = shingle_worker.get_shingles_with_text(simple_text_2)
 
         print(shingle_1)
         print(shingle_2)

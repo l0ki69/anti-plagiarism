@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Tuple
 
 import hashlib
+from itertools import permutations
 
 
 class Shingle:
@@ -14,9 +15,18 @@ class Shingle:
         hash_text = [hashlib.sha1(str(word).encode('utf-8')).hexdigest() for word in text]
 
         shingles_prew = [hash_text[word:word + self.shingle_size] for word in range(len(hash_text))][:-self.shingle_size + 1]
-        shingles = [hashlib.sha1(str(hex(sum(list(map(lambda x: int(x, base=16), hash))))).encode('utf-8')).hexdigest() for hash in shingles_prew]
 
-        return shingles
+        shingles_permutations = []
+        # loop makes all possible permutations of phrases
+        for phrase in shingles_prew:
+            for permutation in self.get_permutations():
+                shing = ""
+                for permut in permutation:
+                    shing += phrase[int(permut)]
+
+                shingles_permutations.append(hashlib.sha1(str(shing).encode('utf-8')).hexdigest())
+
+        return shingles_permutations
 
     def get_list_words(self, text: List[str]) -> List[List[str]]:
         return [sentence.split(' ') for sentence in text]
@@ -27,8 +37,11 @@ class Shingle:
             shingles_list.extend(sentence)
         return shingles_list
 
-    def get_shingles_with_page(self, text_page: List[str]) -> List[str]:
-        sentence_words = self.get_list_words(text_page)
+    def get_shingles_with_text(self, text: List[str]) -> List[str]:
+        sentence_words = self.get_list_words(text)
 
-        shingles_page = [self.get_shingles_with_sentence(text=sentence) for sentence in sentence_words]
-        return self.get_list_shingles(shingles_page)
+        shingles_text = [self.get_shingles_with_sentence(text=sentence) for sentence in sentence_words]
+        return self.get_list_shingles(shingles_text)
+
+    def get_permutations(self) -> List[Tuple[str]]:
+        return [permutation for permutation in permutations("".join([str(i) for i in range(self.shingle_size)]))]
