@@ -1,0 +1,1 @@
+JSON_DATA_FILE_PATH = "convert_symbols_data.json"

@@ -1,0 +1,61 @@
+{
+  "not_stop_words":
+  [
+    {"word":  "данных"}
+  ],
+  "stop_words":
+  [
+    {"word":  "ее"},
+    {"word":  "тем"}
+  ],
+  "exception_characters":
+  [
+    {"symbol": ","},
+    {"symbol": ":"},
+    {"symbol": ";"},
+    {"symbol": "'"},
+    {"symbol": "\""},
+    {"symbol": "?"},
+    {"symbol": "!"},
+    {"symbol": "/"},
+    {"symbol": "\\"},
+    {"symbol": "|"},
+    {"symbol": "@"},
+    {"symbol": "#"},
+    {"symbol": "$"},
+    {"symbol": "%"},
+    {"symbol": "^"},
+    {"symbol": "&"},
+    {"symbol": "*"},
+    {"symbol": "("},
+    {"symbol": ")"},
+    {"symbol": "_"},
+    {"symbol": "+"},
+    {"symbol": "="},
+    {"symbol": "["},
+    {"symbol": "]"},
+    {"symbol": "{"},
+    {"symbol": "}"},
+    {"symbol": "`"},
+    {"symbol": "~"},
+    {"symbol": "№"},
+    {"symbol": "<"},
+    {"symbol": ">"},
+    {"symbol": "–"},
+    {"symbol": "-"}
+  ],
+  "equivalent_symbols":
+  [
+    {"ru": "е", "en": "e"},
+    {"ru": "т", "en": "t"},
+    {"ru": "о", "en": "o"},
+    {"ru": "р", "en": "p"},
+    {"ru": "а", "en": "a"},
+    {"ru": "н", "en": "h"},
+    {"ru": "к", "en": "k"},
+    {"ru": "х", "en": "x"},
+    {"ru": "с", "en": "c"},
+    {"ru": "в", "en": "b"},
+    {"ru": "м", "en": "m"}
+  ]
+}
