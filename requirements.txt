@@ -6,3 +6,5 @@ pyspark==3.2.1
 virtualenv==20.14.1
 python-dotenv==0.20.0
 ru-core-news-md==3.3.0
+psycopg2_binary==2.9.3
+psycopg2==2.9.3

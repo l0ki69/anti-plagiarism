@@ -4,6 +4,7 @@ import sys
 from dotenv import load_dotenv
 
 from Plahiarismhandler import Plahiarismhandler
+from PSQL import PSQL
 
 
 def open_file(file_name):
@@ -16,9 +17,15 @@ if __name__ == '__main__':
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
 
-    args = sys.argv
-    file_name_1 = args[1]
-    file_name_2 = args[2]
+    # args = sys.argv
+    # file_name_1 = args[1]
+    # file_name_2 = args[2]
+
+    psql = PSQL(user=os.getenv("PSQL_USER"),
+                password=os.getenv("PSQL_PASSWORD"),
+                host=os.getenv("PSQL_HOST"),
+                port=os.getenv("PSQL_PORT"),
+                database=os.getenv("PSQL_DATABASE"))
 
     # file_name_1 = "text_1.txt"
     # file_name_2 = "text_2.txt"

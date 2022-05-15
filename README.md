@@ -12,8 +12,9 @@ ___
 1) Python 3.8 [install](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
 2) ```python3.8 -m venv env```
 3) ```source env/bin/activate```
-4) ```python3.8 -m pip install -r requirements.txt```
-5) ```bash start.sh```
+4) ```apt install libpq-dev python3-dev```
+5) ```python3.8 -m pip install -r requirements.txt```
+6) ```bash start.sh```
 
 ## Note
 
