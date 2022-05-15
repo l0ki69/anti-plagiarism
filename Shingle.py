@@ -28,6 +28,17 @@ class Shingle:
         shingles_prew = [hash_text[word:word + self.shingle_size] for word in range(len(hash_text))][:-self.shingle_size + 1]
 
         shingles_permutations = []
+
+        for phrase in shingles_prew:
+            int_list_words = [(int(word, base=16)) for word in phrase]
+            int_list_words.sort()
+            shingles_permutations.append(hashlib.sha1(str("".join([hex(word) for word in int_list_words])).encode('utf-8')).hexdigest())
+
+        return shingles_permutations
+
+    def get_shingles_permutations(self, shingles_prew: List[List[str]]) -> List[str]:
+
+        shingles_permutations = []
         # loop makes all possible permutations of phrases
         for phrase in shingles_prew:
             for permutation in self.get_permutations():
@@ -56,6 +67,7 @@ class Shingle:
         if shingles_text:
             if not shingles_text[0]:
                 raise TextIsShort
+
         return self.get_list_shingles(shingles_text)
 
     def get_permutations(self) -> List[Tuple[str]]:
