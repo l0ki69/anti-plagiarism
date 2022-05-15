@@ -22,17 +22,18 @@ class Shingle:
     def __init__(self, shingle_size: int):
         self.shingle_size = shingle_size
 
-    def get_shingles_with_sentence(self, text):
-        hash_text = [hashlib.sha1(str(word).encode('utf-8')).hexdigest() for word in text]
+    def get_shingles_with_sentence(self, sentence):
+        hash_sentence = [{"hash": hashlib.md5(str(word).encode('utf-8')).hexdigest(), "word": word} for word in sentence]
 
-        shingles_prew = [hash_text[word:word + self.shingle_size] for word in range(len(hash_text))][:-self.shingle_size + 1]
+        shingles_prew = [hash_sentence[word:word + self.shingle_size] for word in range(len(hash_sentence))][:-self.shingle_size + 1]
 
         shingles_permutations = []
-
         for phrase in shingles_prew:
-            int_list_words = [(int(word, base=16)) for word in phrase]
-            int_list_words.sort()
-            shingles_permutations.append(hashlib.sha1(str("".join([hex(word) for word in int_list_words])).encode('utf-8')).hexdigest())
+            sorted_list_words = sorted(phrase, key=lambda hs: int(hs["hash"], base=16), reverse=True)
+
+            hash = hashlib.md5(str("".join([word["hash"] for word in sorted_list_words])).encode('utf-8')).hexdigest()
+            phrase = " ".join([word["word"] for word in sorted_list_words])
+            shingles_permutations.append({"hash": hash, "phrase": phrase})
 
         return shingles_permutations
 
@@ -46,29 +47,21 @@ class Shingle:
                 for permut in permutation:
                     shing += phrase[int(permut)]
 
-                shingles_permutations.append(hashlib.sha1(str(shing).encode('utf-8')).hexdigest())
+                shingles_permutations.append(hashlib.md5(str(shing).encode('utf-8')).hexdigest())
 
         return shingles_permutations
 
-    def get_list_words(self, text: List[str]) -> List[List[str]]:
-        return [sentence.split(' ') for sentence in text]
+    def get_shingles_with_text(self, text: List[str]) -> List:
+        sentence_words = [sentence.split(' ') for sentence in text]
 
-    def get_list_shingles(self, shingles: List[List[str]]):
-        shingles_list = []
-        for sentence in shingles:
-            shingles_list.extend(sentence)
-        return shingles_list
+        shingles = []
+        for sentence in sentence_words:
+            shingles.extend(self.get_shingles_with_sentence(sentence=sentence))
 
-    def get_shingles_with_text(self, text: List[str]) -> List[str]:
-        sentence_words = self.get_list_words(text)
+        if not shingles:
+            raise TextIsShort
 
-        shingles_text = [self.get_shingles_with_sentence(text=sentence) for sentence in sentence_words]
-
-        if shingles_text:
-            if not shingles_text[0]:
-                raise TextIsShort
-
-        return self.get_list_shingles(shingles_text)
+        return shingles
 
     def get_permutations(self) -> List[Tuple[str]]:
         return [permutation for permutation in permutations("".join([str(i) for i in range(self.shingle_size)]))]
