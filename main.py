@@ -1,10 +1,10 @@
 from typing import List, Dict
 import os
 import sys
+import json
 from dotenv import load_dotenv
 
-from Plahiarismhandler import Plahiarismhandler
-from PSQL import PSQL
+from Plahiarismhandler import Plahiarismhandler, psql
 
 
 def open_file(file_name):
@@ -21,14 +21,8 @@ if __name__ == '__main__':
     # file_name_1 = args[1]
     # file_name_2 = args[2]
 
-    psql = PSQL(user=os.getenv("PSQL_USER"),
-                password=os.getenv("PSQL_PASSWORD"),
-                host=os.getenv("PSQL_HOST"),
-                port=os.getenv("PSQL_PORT"),
-                database=os.getenv("PSQL_DATABASE"))
-
-    # file_name_1 = "text_1.txt"
-    # file_name_2 = "text_2.txt"
+    file_name_1 = "text_1.txt"
+    file_name_2 = "text_2.txt"
 
     text_1 = open_file(file_name_1)
     text_2 = open_file(file_name_2)
@@ -39,9 +33,17 @@ if __name__ == '__main__':
     # text_1 = "Солнце светит ярко"
     # text_2 = "Солнце свитит ярко"
 
-    result = Plahiarismhandler.handler(text_1, text_2)
+    # text = psql.get_text_document(10002)
+    #
+    # shingles = psql.get_shingles(['04647cfbae3ddee9bff56c4a21a2bfe9', '8fee5e7941ce7e8e7c5c30375279885c'])
+    # print(f"shingles = {shingles}")
+    # psql.insert_row()
+
+    handler = Plahiarismhandler()
+    # result = handler.handler(text_1, text_2)
+    result = handler.document_indexing(10003)
 
     print(result)
 
     with open('output.out', 'w') as out:
-        out.write(f"result_percent = {result[0]}\n{result[1]}")
+        json.dump(result, out)
