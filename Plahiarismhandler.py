@@ -66,14 +66,19 @@ class Plahiarismhandler:
         # We take 3 documents with the largest number of unique matches
         return equal_phrase[:3]
 
-    def document_indexing(self, document_id):
+    def document_indexing(self, document_id: int) -> dict:
+        """
+        The method does the reindexing of one document
+        :param document_id: int
+        :return: dict
+        """
         text = self.psql.get_text_document(document_id)
-        simple_text = Сonverter.convert_text(text)
+        simple_text = self.get_conver_text(text)
         shingles = self.shingle_worker.get_shingles_with_text(simple_text)
 
         shingle_hash = [sh['hash'] for sh in shingles]
 
-        result_phrase = self.psql.get_shingles(shingle_hash)
+        result_phrase = self.psql.get_shingles(shingle_hash ,SHINGLE_SIZE)
         hashes_id = {}
         for phrase in result_phrase:
             hashes_id[phrase['hash']] = phrase['id']
@@ -113,8 +118,6 @@ class Plahiarismhandler:
                     if hs in hashes_id:
                         result['result'][doc_id]['hashes_id'].append(hashes_id[hs])
 
-            print(result)
-
             self.psql.remove_doc(document_id, SHINGLE_SIZE)
 
         else:
@@ -126,3 +129,37 @@ class Plahiarismhandler:
 
         return result
 
+    def documents_indexing(self, documents_id: List[int]) -> List[dict]:
+        """
+        The method reindexes the list of documents
+        :param documents_id: List[int]
+        :return: List[dict]
+        """
+        result = []
+        for doc_id in documents_id:
+            try:
+                res = self.document_indexing(doc_id)
+                result.append(res)
+            except Exception as e:
+                result.append({'document_id': doc_id, 'result': {'error': f'Failed to index document - {e}'}})
+
+        return result
+
+    def all_documents_indexing(self) -> List[dict]:
+        """
+        The method reindexes all documents from the in_pages table of documents
+        :return: -> List[dict]
+        """
+
+        documents_id = self.psql.get_all_documents()
+
+        result = self.documents_indexing(documents_id)
+
+        return result
+
+    def get_stop_words(self) -> List[str]:
+        """
+        The method returns a list of stop words
+        :return: List[str]
+        """
+        return Сonverter.get_stop_words()

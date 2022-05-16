@@ -40,11 +40,11 @@ class PSQL:
 
         return text
 
-    def get_shingles(self, shingles: list):
+    def get_shingles(self, shingles: list, shingle_size: int):
         if len(shingles) > 1:
-            self.cursor.execute(f"SELECT id, ip_id, term, size, hash FROM {PSQL_TABLE_SHINGLES} WHERE hash IN {tuple(shingles)};")
+            self.cursor.execute(f"SELECT id, ip_id, term, size, hash FROM {PSQL_TABLE_SHINGLES} WHERE hash IN {tuple(shingles)} and size = {shingle_size};")
         else:
-            self.cursor.execute(f"SELECT id, ip_id, term, size, hash FROM {PSQL_TABLE_SHINGLES} WHERE hash = '{shingles[0]}';")
+            self.cursor.execute(f"SELECT id, ip_id, term, size, hash FROM {PSQL_TABLE_SHINGLES} WHERE hash = '{shingles[0]}' and size = {shingle_size};")
         result = self.cursor.fetchall()
         if result:
             result_js = [{'id': res[0], 'ip_id': res[1], 'term': res[2], 'size': res[3], 'hash': res[4]} for res in result]
@@ -59,3 +59,8 @@ class PSQL:
     def insert_row(self, row):
         self.cursor.execute(f"INSERT INTO {PSQL_TABLE_SHINGLES} (ip_id, term, times, size, hash) VALUES {tuple(row)};")
         self.connection.commit()
+
+    def get_all_documents(self):
+        self.cursor.execute(f"SELECT doc_id FROM {PSQL_TABLE_TEXT_PAGE};")
+        result = self.cursor.fetchall()
+        return [res[0] for res in result]
