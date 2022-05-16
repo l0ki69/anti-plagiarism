@@ -103,3 +103,7 @@ class Сonverter:
                 raise MisprintException
 
         return simple_sentence
+
+    @classmethod
+    def get_stop_words(cls):
+        return list(cls.stop_words)

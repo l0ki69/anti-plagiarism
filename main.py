@@ -4,12 +4,7 @@ import sys
 import json
 from dotenv import load_dotenv
 
-from Plahiarismhandler import Plahiarismhandler, psql
-
-
-def open_file(file_name):
-    with open(file_name, 'r') as f:
-        return f.read()
+from Plahiarismhandler import Plahiarismhandler
 
 
 if __name__ == '__main__':
@@ -17,33 +12,24 @@ if __name__ == '__main__':
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
 
-    # args = sys.argv
-    # file_name_1 = args[1]
-    # file_name_2 = args[2]
-
-    file_name_1 = "text_1.txt"
-    file_name_2 = "text_2.txt"
-
-    text_1 = open_file(file_name_1)
-    text_2 = open_file(file_name_2)
-
-    # text_1 = "Конференция состоится завтра по адресу академии"
-    # text_2 = "Завтра по адресу академии состоится конференция"
-
-    # text_1 = "Солнце светит ярко"
-    # text_2 = "Солнце свитит ярко"
-
-    # text = psql.get_text_document(10002)
-    #
-    # shingles = psql.get_shingles(['04647cfbae3ddee9bff56c4a21a2bfe9', '8fee5e7941ce7e8e7c5c30375279885c'])
-    # print(f"shingles = {shingles}")
-    # psql.insert_row()
+    args = sys.argv
+    action = args[1]
 
     handler = Plahiarismhandler()
-    # result = handler.handler(text_1, text_2)
-    result = handler.document_indexing(10003)
-
-    print(result)
+    if action in ["index_document", '1']:
+        doc_id = args[2]
+        result = handler.documents_indexing([int(doc_id)])
+    elif action in ["index_documents", '2']:
+        docs_id = []
+        for arg in range(2, len(args)):
+            docs_id.append(int(args[arg]))
+            result = handler.documents_indexing(docs_id)
+    elif action in ["index_all_documents", '3']:
+        result = handler.all_documents_indexing()
+    elif action in ["get_stop_words", '4']:
+        result = handler.get_stop_words()
+    else:
+        result = {'result': "not found action"}
 
     with open('output.out', 'w') as out:
-        json.dump(result, out)
+        json.dump(result, out, indent=2, ensure_ascii=False)
