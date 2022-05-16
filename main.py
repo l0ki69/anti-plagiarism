@@ -31,5 +31,5 @@ if __name__ == '__main__':
     else:
         result = {'result': "not found action"}
 
-    with open('output.out', 'w') as out:
+    with open('output.json', 'w') as out:
         json.dump(result, out, indent=2, ensure_ascii=False)
