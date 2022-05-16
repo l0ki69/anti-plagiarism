@@ -61,7 +61,20 @@ class Shingle:
         if not shingles:
             raise TextIsShort
 
+        temp_times = {}
+        for sh in list(shingles):
+            if sh['hash'] in temp_times:
+                temp_times[sh['hash']] += 1
+            else:
+                temp_times[sh['hash']] = 1
+
+        for sh in shingles:
+            sh['times'] = temp_times[sh['hash']]
+
         return shingles
 
     def get_permutations(self) -> List[Tuple[str]]:
         return [permutation for permutation in permutations("".join([str(i) for i in range(self.shingle_size)]))]
+
+    def shingle_sorted(self, shingles: List[str]) -> List[str]:
+        return sorted(shingles, key=lambda hs: int(hs, base=16), reverse=True)
