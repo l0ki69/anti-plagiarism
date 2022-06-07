@@ -1,11 +1,14 @@
-import os
+import copy
+import json
 from typing import List
 
 from Converter import Сonverter, MisprintException
 from Shingle import Shingle
 from Uniqueness import Uniqueness
 from PSQL import PSQL
-from config import SHINGLE_SIZE, COUNT_CONJUNCTION
+from config import SHINGLE_SIZE, COUNT_CONJUNCTION, JSON_DATA_FILE_PATH
+from DocumentHandler import DocumentHandler
+
 
 psql = PSQL()
 
@@ -18,16 +21,27 @@ class Plahiarismhandler:
         self.psql = PSQL()
         self.shingle_worker = Shingle(int(SHINGLE_SIZE))
 
-    def get_conver_text(self, text: str) -> List[str]:
+    def get_html(self, text: str) -> str:
+        with open(JSON_DATA_FILE_PATH, 'r') as f:
+            js = json.load(f)
+            
+        repl_symb = js['replacement_html_symbol']
+
+        for repl in repl_symb:
+            text = text.replace(repl['symbol'], repl['replacement'])
+
+        return f'<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title></title></head><body><p>{text}</p></body></html>'
+
+    def get_convert_text(self, text: str):
         try:
             return Сonverter.convert_text(text)
         except MisprintException as e:
-            return []
+            return [], {}
 
     def handler(self, text_1: str, text_2: str) -> tuple:
 
-        simple_text_1 = self.get_conver_text(text_1)
-        simple_text_2 = self.get_conver_text(text_2)
+        simple_text_1 = self.get_convert_text(text_1)
+        simple_text_2 = self.get_convert_text(text_2)
 
         shingle_1 = self.shingle_worker.get_shingles_with_text(simple_text_1)
         shingle_2 = self.shingle_worker.get_shingles_with_text(simple_text_2)
@@ -73,12 +87,12 @@ class Plahiarismhandler:
         :return: dict
         """
         text = self.psql.get_text_document(document_id)
-        simple_text = self.get_conver_text(text)
-        shingles = self.shingle_worker.get_shingles_with_text(simple_text)
+        simple_text, position_words = self.get_convert_text(text)
+        shingles = self.shingle_worker.get_shingles_with_text(simple_text, position_words)
 
         shingle_hash = [sh['hash'] for sh in shingles]
 
-        result_phrase = self.psql.get_shingles(shingle_hash ,SHINGLE_SIZE)
+        result_phrase = self.psql.get_shingles(shingle_hash, SHINGLE_SIZE)
         hashes_id = {}
         for phrase in result_phrase:
             hashes_id[phrase['hash']] = phrase['id']
@@ -127,7 +141,41 @@ class Plahiarismhandler:
             row = [document_id, str(sh['phrase']).upper(), sh['times'], SHINGLE_SIZE, sh['hash']]
             self.psql.insert_row(row)
 
-        return result
+        plagiarism_hashes = []
+        for doc in result['result'].values():
+            for hs in doc['hashes']:
+                plagiarism_hashes.append(hs)
+
+        text_html = copy.copy(text).lower()
+
+        position = []
+        for sh in shingles:
+            if sh['hash'] in plagiarism_hashes:
+                position.append(sh['pos'])
+
+        for pos in position:
+            text_html = text_html[:pos['start']] + text_html[pos['start']:pos['end']].upper() + text_html[pos['end']:]
+
+        start_symb = "<b>"
+        end_symb = "</b>"
+        print_text = ""
+        fat = False
+        for ind, symb in  enumerate(text_html):
+            if symb.isalpha():
+                if symb == symb.upper():
+                    if not fat:
+                        print_text += start_symb
+                        fat = True
+                else:
+                    if fat:
+                        print_text += end_symb
+                        fat = False
+
+            print_text += symb
+            if fat and int == len(text_html) - 1:
+                print_text += end_symb
+
+        return result, self.get_html(print_text)
 
     def documents_indexing(self, documents_id: List[int]) -> List[dict]:
         """
@@ -163,3 +211,7 @@ class Plahiarismhandler:
         :return: List[str]
         """
         return Сonverter.get_stop_words()
+
+    def add_document(self, document_path: str) -> int:
+        result_text = DocumentHandler.handler(document_path)
+        return self.psql.add_document(result_text)
