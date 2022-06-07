@@ -6,7 +6,7 @@ from Converter import Сonverter, MisprintException
 from Shingle import Shingle
 from Uniqueness import Uniqueness
 from PSQL import PSQL
-from container_dir.config import SHINGLE_SIZE, COUNT_CONJUNCTION, JSON_DATA_FILE_PATH
+from container_dir.config import COUNT_CONJUNCTION, JSON_DATA_FILE_PATH
 from DocumentHandler import DocumentHandler
 
 
@@ -17,9 +17,10 @@ class Plahiarismhandler:
     """
     The class performs a full cycle of checking for similarity of texts
     """
-    def __init__(self):
+    def __init__(self, shingle_size):
         self.psql = PSQL()
-        self.shingle_worker = Shingle(int(SHINGLE_SIZE))
+        self.shingle_size = shingle_size
+        self.shingle_worker = Shingle(int(self.shingle_size))
 
     def get_html(self, text: str) -> str:
         with open(JSON_DATA_FILE_PATH, 'r') as f:
@@ -80,7 +81,7 @@ class Plahiarismhandler:
         # We take 3 documents with the largest number of unique matches
         return equal_phrase[:3]
 
-    def document_indexing(self, document_id: int) -> dict:
+    def document_indexing(self, document_id: int):
         """
         The method does the reindexing of one document
         :param document_id: int
@@ -92,14 +93,14 @@ class Plahiarismhandler:
 
         shingle_hash = [sh['hash'] for sh in shingles]
 
-        result_phrase = self.psql.get_shingles(shingle_hash, SHINGLE_SIZE)
+        result_phrase = self.psql.get_shingles(shingle_hash, self.shingle_size)
         hashes_id = {}
         for phrase in result_phrase:
             hashes_id[phrase['hash']] = phrase['id']
 
         equal_phrase_dict = {}
         for phrase in result_phrase:
-            if phrase['size'] == SHINGLE_SIZE:
+            if phrase['size'] == self.shingle_size:
                 if phrase['ip_id'] in equal_phrase_dict:
                     equal_phrase_dict[phrase['ip_id']].append(phrase['hash'])
                 else:
@@ -132,13 +133,13 @@ class Plahiarismhandler:
                     if hs in hashes_id:
                         result['result'][doc_id]['hashes_id'].append(hashes_id[hs])
 
-            self.psql.remove_doc(document_id, SHINGLE_SIZE)
+            self.psql.remove_doc(document_id, self.shingle_size)
 
         else:
             result = Uniqueness.uniqueness_document_empty({'doc_id': document_id, 'hashes': shingle_hash})
 
         for sh in shingles:
-            row = [document_id, str(sh['phrase']).upper(), sh['times'], SHINGLE_SIZE, sh['hash']]
+            row = [document_id, str(sh['phrase']).upper(), sh['times'], self.shingle_size, sh['hash']]
             self.psql.insert_row(row)
 
         plagiarism_hashes = []
@@ -175,7 +176,7 @@ class Plahiarismhandler:
             if fat and int == len(text_html) - 1:
                 print_text += end_symb
 
-        return result, self.get_html(print_text)
+        return {"report": result, "html": self.get_html(print_text)}
 
     def documents_indexing(self, documents_id: List[int]) -> List[dict]:
         """
@@ -189,7 +190,9 @@ class Plahiarismhandler:
                 res = self.document_indexing(doc_id)
                 result.append(res)
             except Exception as e:
-                result.append({'document_id': doc_id, 'result': {'error': f'Failed to index document - {e}'}})
+                result.append({"report": {'document_id': doc_id,
+                                          'result': {'error': f'Failed to index document - {e}'}},
+                               "html": ""})
 
         return result
 
@@ -205,12 +208,12 @@ class Plahiarismhandler:
 
         return result
 
-    def get_stop_words(self) -> List[str]:
+    def get_stop_words(self) -> dict:
         """
         The method returns a list of stop words
         :return: List[str]
         """
-        return Сonverter.get_stop_words()
+        return [{"report": {"doc_id": "stop_words", "result": Сonverter.get_stop_words()}, "html": ""}]
 
     def add_document(self, document_path: str) -> int:
         result_text = DocumentHandler.handler(document_path)
