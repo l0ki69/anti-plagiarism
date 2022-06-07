@@ -6,7 +6,7 @@ import os
 import spacy
 from spacy.lang.ru.examples import sentences
 
-from config import JSON_DATA_FILE_PATH
+from container_dir.config import JSON_DATA_FILE_PATH
 
 
 class СonverterException(Exception):

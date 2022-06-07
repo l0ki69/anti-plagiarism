@@ -1,5 +1,5 @@
 import os
-from config import PSQL_USER, PSQL_PASSWORD, PSQL_HOST, \
+from container_dir.config import PSQL_USER, PSQL_PASSWORD, PSQL_HOST, \
                    PSQL_PORT, PSQL_DATABASE, PSQL_TABLE_SHINGLES, PSQL_TABLE_TEXT_PAGE
 
 import psycopg2

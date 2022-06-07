@@ -6,7 +6,7 @@ from Converter import Сonverter, MisprintException
 from Shingle import Shingle
 from Uniqueness import Uniqueness
 from PSQL import PSQL
-from config import SHINGLE_SIZE, COUNT_CONJUNCTION, JSON_DATA_FILE_PATH
+from container_dir.config import SHINGLE_SIZE, COUNT_CONJUNCTION, JSON_DATA_FILE_PATH
 from DocumentHandler import DocumentHandler
 
 
