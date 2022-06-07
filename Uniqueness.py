@@ -17,7 +17,7 @@ class Uniqueness:
     @classmethod
     def uniqueness_document(cls, verifiable_document: Dict, phrase_compare: List[Dict]) -> Dict:
         uniqueness_percent = {}
-
+        print("len_shing_all = ", len(verifiable_document['hashes']))
         if phrase_compare:
             for doc in phrase_compare:
                 union = set(verifiable_document['hashes']) & set(doc['hashes'])
@@ -31,4 +31,4 @@ class Uniqueness:
     def uniqueness_document_empty(cls, verifiable_document: Dict):
         return {'document_id': verifiable_document['doc_id'],
                 'result': {verifiable_document['doc_id']:
-                               {'percent': 100, "hashes": list(verifiable_document['hashes'])}}}
+                               {'percent': 0.0, "hashes": list(verifiable_document['hashes'])}}}

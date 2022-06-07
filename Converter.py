@@ -1,3 +1,4 @@
+import copy
 from typing import List
 import json
 import os
@@ -35,7 +36,7 @@ class Сonverter:
 
     exception_characters = []  # Characters to be removed
     equivalent_symbols = []  # Equivalent symbols
-
+    separator_symbols = []
     @classmethod
     def load_json_conver_data(cls):
         file_name = JSON_DATA_FILE_PATH
@@ -52,11 +53,20 @@ class Сonverter:
             for stop_word in js['stop_words']:
                 cls.stop_words.add(stop_word['word'])
 
+            cls.separator_symbols = js['separator_symbols']
+
     @classmethod
-    def convert_text(cls, text: str) -> List[str]:
+    def convert_text(cls, text: str):
         cls.load_json_conver_data()
 
         text = text.lower()
+        text_copy = copy.copy(text)
+
+        for sep in cls.separator_symbols:
+            text = text.replace(sep['symbol'], ' ')
+
+        text = cls.del_duplication_symbols(text)
+
         for char in cls.exception_characters:
             text = text.replace(char['symbol'], '')
 
@@ -66,17 +76,16 @@ class Сonverter:
         for number in range(0, 10):
             text = text.replace(str(number), '')
 
-        text = text.replace('\n', ' ')
-        text = text.replace('\t', ' ')
-        text = text.replace('  ', ' ')
-
         result_sentence = []
         for sentence in text.split('.'):
-            if sentence != ' ':
+            if sentence not in [' ', '']:
+                sentence = cls.del_duplication_symbols(sentence.strip())
                 result_sentence.append(sentence.strip())
 
         simple_sentence = []
         count_misprint = 0
+        position_words = {}
+        position_text = 0
         for sentence in result_sentence:
             doc = cls.nlp(sentence)
             simple_text = ''
@@ -90,6 +99,14 @@ class Сonverter:
                 if token.text == token.lemma_ and token.pos_ == 'VERB':
                     count_misprint += 1
 
+                if token.text in text_copy:
+                    start = text_copy.find(token.text, position_text, len(text_copy))
+                    position_text = start
+                    if token.lemma_ in position_words:
+                        position_words[token.lemma_].append({'start': start, 'end': start + len(token.text)})
+                    else:
+                        position_words[token.lemma_] = [{'start': start, 'end': start + len(token.text)}]
+
                 simple_text += token.lemma_ + ' '
                 # print(f"text = {token.text} | token.pos_ = {token.pos_} | token.tag = {token.tag_} |"
                 #       f"token.dep_ = {token.dep_} | token.vocab = {token.vocab.lang} | "
@@ -100,8 +117,16 @@ class Сonverter:
             if count_misprint / len(text.split(' ')) > 0.9:
                 raise MisprintException
 
-        return simple_sentence
+        return simple_sentence, position_words
 
     @classmethod
     def get_stop_words(cls):
         return list(cls.stop_words)
+
+    @classmethod
+    def del_duplication_symbols(cls, text: str) -> str:
+        while " " * 2 in text:
+            text = text.replace(" " * 2, " ")
+            text = text.replace("." * 2, ".")
+
+        return text

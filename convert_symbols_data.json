@@ -42,7 +42,8 @@
     {"symbol": "<"},
     {"symbol": ">"},
     {"symbol": "–"},
-    {"symbol": "-"}
+    {"symbol": "-"},
+    {"symbol":  "—"}
   ],
   "equivalent_symbols":
   [
@@ -57,5 +58,21 @@
     {"ru": "с", "en": "c"},
     {"ru": "в", "en": "b"},
     {"ru": "м", "en": "m"}
+  ],
+  "separator_symbols":
+  [
+    {"symbol": "\n"},
+    {"symbol": "\\n"},
+    {"symbol": "\t"},
+    {"symbol": "\\t"},
+    {"symbol": "  "}
+  ],
+  "replacement_html_symbol":
+  [
+    {"symbol":  "\\N", "replacement": "<br>"},
+    {"symbol":  "\\n", "replacement": "<br>"},
+    {"symbol":  "\\t", "replacement": "    "},
+    {"symbol":  "\\T", "replacement": "    "},
+    {"symbol":  "\\xa0", "replacement": ""}
   ]
 }

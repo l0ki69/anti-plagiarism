@@ -64,3 +64,12 @@ class PSQL:
         self.cursor.execute(f"SELECT doc_id FROM {PSQL_TABLE_TEXT_PAGE};")
         result = self.cursor.fetchall()
         return [res[0] for res in result]
+
+    def add_document(self, text: str) -> int:
+        self.cursor.execute(f"SELECT nextval('in_pages_id_seq_doc');")
+        doc_id = int(list(self.cursor.fetchall())[0][0])
+        row = tuple([doc_id, 1, text])
+        self.cursor.execute(f"INSERT INTO {PSQL_TABLE_TEXT_PAGE} (doc_id, page_num, page_text) VALUES {row};")
+        self.connection.commit()
+        return doc_id
+
