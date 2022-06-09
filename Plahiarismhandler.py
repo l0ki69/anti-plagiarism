@@ -213,7 +213,7 @@ class Plahiarismhandler:
         The method returns a list of stop words
         :return: List[str]
         """
-        return [{"report": {"doc_id": "stop_words", "result": Сonverter.get_stop_words()}, "html": ""}]
+        return [{"report": {"document_id": "stop_words", "result": Сonverter.get_stop_words()}, "html": ""}]
 
     def add_document(self, document_path: str) -> int:
         result_text = DocumentHandler.handler(document_path)

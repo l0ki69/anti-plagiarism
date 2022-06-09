@@ -7,4 +7,5 @@ PSQL_DATABASE = "test_documents"
 JSON_DATA_FILE_PATH = "container_dir/convert_symbols_data.json"
 PSQL_TABLE_SHINGLES = "ip_term_shingles"
 PSQL_TABLE_TEXT_PAGE = "in_pages"
+PSQL_TABLE_PROCESSING = "result_processing_plagiarism"
 COUNT_CONJUNCTION = 3
