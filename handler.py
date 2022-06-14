@@ -21,7 +21,7 @@ def get_handler():
         action = int(args.get('action', -1))
 
         if -1 in [size, action] or action not in [0, 1, 2, 3, 4]:
-            return return_result("size or action error")
+            return return_result("size or action error", 400)
 
         cmd.extend([str(size), str(action)])
         if action == 0:
