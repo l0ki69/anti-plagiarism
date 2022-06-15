@@ -51,7 +51,7 @@ def reindex_handler():
     cmd = ["python3.8", "main.py", "reindex"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex": f"{BASE_URL}/?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"reindex": f"{BASE_URL}/reindex/?{Params.SIZE}={Params.SIZE.upper()}"
                                        f"&{Params.DOC_ID}={Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -76,7 +76,7 @@ def reindex_list_handler():
     cmd = ["python3.8", "main.py", "reindex_list"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex_list": f"{BASE_URL}/?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"reindex_list": f"{BASE_URL}/reindex_list/?{Params.SIZE}={Params.SIZE.upper()}"
                                             f"&{Params.DOCS_ID}={Params.DOC_ID.upper()};{Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -107,7 +107,7 @@ def reindex_all_handler():
     cmd = ["python3.8", "main.py", "reindex_all"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex_all": f"{BASE_URL}/?{Params.SIZE}={Params.SIZE.upper()}"})
+            return jsonify({"reindex_all": f"{BASE_URL}/reindex_all/?{Params.SIZE}={Params.SIZE.upper()}"})
 
         if check_base_param(request):
             return jsonify("Enter parameters", 200)
@@ -130,7 +130,7 @@ def reindex_all_handler():
 def get_report_handler():
     try:
         if not request.args.keys():
-            return jsonify({"get_report": f"{BASE_URL}/?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"get_report": f"{BASE_URL}/get_report/?{Params.SIZE}={Params.SIZE.upper()}"
                                           f"&{Params.DOC_ID}={Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -176,7 +176,7 @@ def get_stop_words_handler():
 
 @app.route('/plagiarism/add_document/', methods=['GET'])
 def add_document_handler_get():
-    return jsonify({"add_document": f'|curl -F "file=@PATH_FILE;filename=FILENAME" "{BASE_URL}/?size=SIZE"|'})
+    return jsonify({"add_document": f'|curl -F "file=@PATH_FILE;filename=FILENAME" "{BASE_URL}/get_stop_words/?size=SIZE"|'})
 
 
 @app.route('/plagiarism/add_document/', methods=['POST'])
