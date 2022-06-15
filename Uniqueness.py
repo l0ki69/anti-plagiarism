@@ -21,13 +21,13 @@ class Uniqueness:
             for doc in phrase_compare:
                 union = set(verifiable_document['hashes']) & set(doc['hashes'])
                 percent = len(union) / len(set(verifiable_document['hashes']))
-                uniqueness_percent[doc['doc_id']] = {'percent': (percent) * 100, "hashes": list(union)}
+                uniqueness_percent[str(doc['doc_id'])] = {'percent': (percent) * 100, "hashes": list(union)}
 
-                return {'document_id': verifiable_document['doc_id'], 'result': uniqueness_percent}
+            return {'document_id': verifiable_document['doc_id'], 'result': uniqueness_percent}
         else:
             return cls.uniqueness_document_empty(verifiable_document)
     @classmethod
     def uniqueness_document_empty(cls, verifiable_document: Dict):
         return {'document_id': verifiable_document['doc_id'],
-                'result': {verifiable_document['doc_id']:
+                'result': {str(verifiable_document['doc_id']):
                                {'percent': 0.0, "hashes": list(verifiable_document['hashes'])}}}

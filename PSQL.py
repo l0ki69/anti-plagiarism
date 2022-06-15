@@ -80,12 +80,12 @@ class PSQL:
         result = self.cursor.fetchall()
         if not result:
             return None
-        result_js = [{'doc_id': res[0], 'result_json': res[1], 'size': res[2], 'processing': res[3]} for res in result]
+        result_js = [{'doc_id': res[0], 'result_json': res[1], 'size': res[2], 'processing': res[3], "html": res[4]} for res in result]
         return result_js
 
-    def add_result(self, doc_id: str, result: str, size: int, processing: bool):
+    def add_result(self, doc_id: str, result: str, size: int, processing: bool, html_text: str):
         self.cursor.execute(f"DELETE FROM {PSQL_TABLE_PROCESSING} WHERE doc_id = {doc_id} and size={size};")
         self.connection.commit()
-        row = [int(doc_id), result, size, processing]
-        self.cursor.execute(f"INSERT INTO {PSQL_TABLE_PROCESSING} (doc_id, result_json, size, processing) VALUES {tuple(row)};")
+        row = [int(doc_id), result, size, processing, html_text]
+        self.cursor.execute(f"INSERT INTO {PSQL_TABLE_PROCESSING} (doc_id, result_json, size, processing, html_text) VALUES {tuple(row)};")
         self.connection.commit()

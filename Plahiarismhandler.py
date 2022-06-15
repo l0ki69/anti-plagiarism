@@ -143,7 +143,9 @@ class Plahiarismhandler:
             self.psql.insert_row(row)
 
         plagiarism_hashes = []
-        for doc in result['result'].values():
+        for doc_id, doc in result['result'].items():
+            if str(doc_id) == str(document_id):
+                continue
             for hs in doc['hashes']:
                 plagiarism_hashes.append(hs)
 
@@ -161,22 +163,30 @@ class Plahiarismhandler:
         end_symb = "</b>"
         print_text = ""
         fat = False
-        for ind, symb in  enumerate(text_html):
+        br = False
+        for ind, symb in enumerate(text_html):
+            if symb == '\\':
+                br = True
+                continue
+            if br and symb in ['N', 'n']:
+                print_text += "<br>"
+                continue
             if symb.isalpha():
                 if symb == symb.upper():
                     if not fat:
                         print_text += start_symb
                         fat = True
+                elif symb == '\n':
+                    print_text += "<br>"
                 else:
                     if fat:
                         print_text += end_symb
                         fat = False
-
             print_text += symb
             if fat and int == len(text_html) - 1:
                 print_text += end_symb
 
-        return {"report": result, "html": self.get_html(print_text)}
+        return {"report": result, "html": print_text}
 
     def documents_indexing(self, documents_id: List[int]) -> List[dict]:
         """
