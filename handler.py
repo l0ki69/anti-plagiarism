@@ -187,9 +187,11 @@ def add_document_handler():
 
     file = request.files['file']
     file_name = file.filename
-    size = get_args(request)
 
-    if None in size:
+    args = dict(request.values)
+    size = args.get(Params.SIZE, None)
+
+    if size is None:
         return return_error(f"Parameters {request.args} uncorrect", 400)
 
     if not file_name:
