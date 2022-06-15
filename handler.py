@@ -6,6 +6,8 @@ from flask import Flask, request, make_response, jsonify
 import subprocess
 from Plahiarismhandler import Plahiarismhandler
 
+from container_dir.config import BASE_URL
+
 
 app = Flask(__name__)
 
@@ -49,7 +51,7 @@ def reindex_handler():
     cmd = ["python3.8", "main.py", "reindex"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex": f"{request.base_url}?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"reindex": f"{BASE_URL}?{Params.SIZE}={Params.SIZE.upper()}"
                                        f"&{Params.DOC_ID}={Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -74,7 +76,7 @@ def reindex_list_handler():
     cmd = ["python3.8", "main.py", "reindex_list"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex_list": f"{request.base_url}?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"reindex_list": f"{BASE_URL}?{Params.SIZE}={Params.SIZE.upper()}"
                                             f"&{Params.DOCS_ID}={Params.DOC_ID.upper()};{Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -105,7 +107,7 @@ def reindex_all_handler():
     cmd = ["python3.8", "main.py", "reindex_all"]
     try:
         if not request.args.keys():
-            return jsonify({"reindex_all": f"{request.base_url}?{Params.SIZE}={Params.SIZE.upper()}"})
+            return jsonify({"reindex_all": f"{BASE_URL}?{Params.SIZE}={Params.SIZE.upper()}"})
 
         if check_base_param(request):
             return jsonify("Enter parameters", 200)
@@ -128,7 +130,7 @@ def reindex_all_handler():
 def get_report_handler():
     try:
         if not request.args.keys():
-            return jsonify({"get_report": f"{request.base_url}?{Params.SIZE}={Params.SIZE.upper()}"
+            return jsonify({"get_report": f"{BASE_URL}?{Params.SIZE}={Params.SIZE.upper()}"
                                           f"&{Params.DOC_ID}={Params.DOC_ID.upper()}"})
 
         if check_base_param(request):
@@ -174,7 +176,7 @@ def get_stop_words_handler():
 
 @app.route('/plagiarism/add_document/', methods=['GET'])
 def add_document_handler_get():
-    return jsonify({"add_document": f'|curl -F "file=@PATH_FILE;filename=FILENAME" "{request.base_url}?size=SIZE"|'})
+    return jsonify({"add_document": f'|curl -F "file=@PATH_FILE;filename=FILENAME" "{BASE_URL}?size=SIZE"|'})
 
 
 @app.route('/plagiarism/add_document/', methods=['POST'])
@@ -207,7 +209,7 @@ def add_document_handler():
 @app.route('/plagiarism', methods=['GET'])
 def handler():
     methods = ["get_report", "add_document", "reindex", "reindex_list", "reindex_all", "get_stop_words"]
-    methods_result = {method: f"{request.base_url}/{method}/" for method in methods}
+    methods_result = {method: f"{BASE_URL}/{method}/" for method in methods}
 
     return jsonify(methods_result)
 
