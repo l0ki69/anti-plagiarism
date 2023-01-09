@@ -4,13 +4,15 @@ Anti-plagiarism
 
 System for detecting borrowed text fragments in an indexed collection of documents
 
+## Full description
+[View description](https://cloud.mail.ru/public/M2NP/rsG5xP3iV)
 
 ## Installation
 
 ___
 
 1) Python 3.8 [install](https://linuxize.com/post/how-to-install-python-3-8-on-ubuntu-18-04/)
-5) ```python3.8 -m pip install -r requirements.txt```
+2) ```python3.8 -m pip install -r requirements.txt```
 
 
 ## Note
